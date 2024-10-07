@@ -1,26 +1,36 @@
 "use client";
-import { useEffect, useState } from "react";
+import seed from "@/lib/data/seeds/pixar";
+import { updateDb } from "@/lib/features/appSlice";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { initDatabase } from "../lib/sql";
 
 export default function App() {
-    const [result, setResult] = useState(null);
+    const db = useSelector((state) => state.app.db);
+    const dispatch = useDispatch()
 
     useEffect(() => {
         async function runSQL() {
             const db = await initDatabase();
-            db.run("CREATE TABLE test (col1, col2);");
-            db.run("INSERT INTO test VALUES (?, ?), (?, ?);", [1, 'foo', 2, 'bar']);
-            const res = db.exec("SELECT * FROM test;");
-            setResult(JSON.stringify(res));
+            dispatch(updateDb(db));
         }
 
         runSQL();
     }, []);
 
+    useEffect(() => {
+        if (db && seed) {
+            seed.forEach((sql) => {
+                db.exec(sql);
+            });
+            const res = db.exec("SELECT * FROM pixar;");
+            console.log(JSON.stringify(res));
+        }
+    }, [db, seed])
+
     return (
         <div>
             <h1>Hello World!</h1>
-            <pre>{result}</pre>
         </div>
     );
 }
