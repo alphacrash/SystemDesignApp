@@ -1,8 +1,9 @@
+import App from "./components/App";
 
 export default function SQL() {
     return (
         <div>
-            SQL
+            <App />
         </div>
     );
 }
