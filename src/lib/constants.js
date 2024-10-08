@@ -1,0 +1,1 @@
+export const SQL_WASM = "/sql-wasm.wasm";
